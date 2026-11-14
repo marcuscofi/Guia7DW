@@ -1,0 +1,55 @@
+@import url("../bootstrap/icons/bootstrap-icons.css");
+
+body {
+    min-height: 100vh;
+}
+
+/* Panel de resultados del conteo de etiquetas (index.html) */
+.panel-resultado {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: var(--bs-light);
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.panel-resultado code {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Mensajes de validacion creados dinamicamente (ejemplo2) */
+.js-feedback {
+    font-size: 0.875em;
+}
+
+/* Tarjetas del explorador de la API (ejercicio2) */
+.tarjeta-coctel {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-coctel:hover,
+.tarjeta-coctel:focus-within {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.tarjeta-coctel .card-img-top {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background-color: var(--bs-gray-200);
+}
+
+.detalle-imagen {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tarjeta-coctel {
+        transition: none;
+    }
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="icon" href="../img/js.png" sizes="32x32" type="image/png">
+    <title>Guía 7: Explorador de cócteles con RapidAPI</title>
+</head>
+
+<body>
+
+    <header class="p-3 text-bg-dark">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="../index.html" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <img src="../img/js.png" class="bi me-2" width="48" height="48" alt="JavaScript">
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="../index.html" class="nav-link px-2 text-white">Ejemplo 1</a></li>
+                    <li><a href="../pages/ejemplo1.html" class="nav-link px-2 text-white">Ejemplo 2</a></li>
+                    <li><a href="../pages/ejemplo2.html" class="nav-link px-2 text-white">Ejemplo 3</a></li>
+                    <li><a href="../pages/ejemplo3.html" class="nav-link px-2 text-white">Ejemplo 4</a></li>
+                    <li><a href="../pages/ejemplo4.html" class="nav-link px-2 text-white">Ejemplo 5</a></li>
+                    <li><a href="../pages/ejercicio2.html" class="nav-link px-2 text-warning fw-bold">
+                            <i class="bi bi-check"></i> Ejercicio 2
+                        </a></li>
+                </ul>
+
+                <div class="text-end">
+                    <button type="button" id="idBtnConfig" class="btn btn-warning">
+                        <i class="bi bi-key"></i> Credenciales RapidAPI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container pb-5">
+        <div class="py-5 text-center">
+            <h1 class="display-5 fw-bold">Explorador de cócteles</h1>
+            <p class="lead mb-0">
+                Consume la API <a href="https://www.thecocktaildb.com/documentation">TheCocktailDB</a> disponible en RapidAPI mediante Fetch API.
+            </p>
+            <br>
+            <p class="small text-muted mb-0">
+                <strong>Nota:</strong> Utilice la API key de prueba proporcionada en la documentación de la API, ya que no se pudo configurar el plan gratuito de RapidAPI.
+            </p>
+            <p class="small text-muted mb-0">
+                Los endpoints utilizados son: <code class="text-break">/search.php?s=</code> y <code class="text-break">/filter.php?c=</code>.
+        </div>
+
+        <!-- Filtros de busqueda -->
+        <form id="idFormBusqueda" class="row g-3 align-items-end mb-4" novalidate>
+            <div class="col-12 col-md-6">
+                <label for="idBuscar" class="form-label fw-bold">Buscar por nombre</label>
+                <div class="input-group">
+                    <input type="search" class="form-control" id="idBuscar" placeholder="Ejemplo: margarita"
+                        autocomplete="off" maxlength="60">
+                    <button type="submit" class="btn btn-primary" id="idBtnBuscar">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="idCategoria" class="form-label fw-bold">O explorar por categoría</label>
+                <select class="form-select" id="idCategoria">
+                    <option value="">Seleccione una categoría</option>
+                </select>
+            </div>
+        </form>
+
+        <!-- Mensajes de estado: carga, errores y resultados vacios -->
+        <div id="idEstado" aria-live="polite"></div>
+
+        <!-- Listado de resultados -->
+        <div class="d-flex flex-wrap justify-content-between align-items-baseline mb-3">
+            <h2 class="h4 fw-bold mb-0" id="idTituloResultados" hidden></h2>
+            <small class="text-muted" id="idContador" hidden></small>
+        </div>
+        <div class="row g-3" id="idListado" aria-live="polite"></div>
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-outline-primary" id="idBtnVerMas" hidden>
+                <i class="bi bi-arrow-down-circle"></i> Ver más
+            </button>
+        </div>
+    </main>
+
+    <!-- MODAL: DETALLE DE UN COCTEL -->
+    <div class="modal fade" id="idModalDetalle" tabindex="-1" aria-labelledby="idTituloDetalle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="idTituloDetalle">Detalle</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="idCuerpoDetalle"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREDENCIALES DE RAPIDAPI -->
+    <div class="modal fade" id="idModalConfig" tabindex="-1" aria-labelledby="idTituloConfig" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" id="idFormConfig" novalidate>
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="idTituloConfig">Credenciales de RapidAPI</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted">
+                        Cree una cuenta en RapidAPI, suscríbase al plan gratuito de la API
+                        <em>The Cocktail DB</em> y copie su clave. Los datos se guardan únicamente en el
+                        almacenamiento local de este navegador.
+                    </p>
+                    <div class="mb-3">
+                        <label for="idApiKey" class="form-label fw-bold">X-RapidAPI-Key</label>
+                        <div class="input-group has-validation">
+                            <input type="password" class="form-control" id="idApiKey" autocomplete="off"
+                                spellcheck="false">
+                            <button type="button" class="btn btn-outline-secondary" id="idBtnMostrarKey"
+                                aria-label="Mostrar u ocultar la clave" aria-pressed="false">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <div class="invalid-feedback">Ingrese su API key de RapidAPI.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="idApiHost" class="form-label fw-bold">X-RapidAPI-Host</label>
+                        <input type="text" class="form-control" id="idApiHost" autocomplete="off" spellcheck="false">
+                        <div class="invalid-feedback">Ingrese un host válido, por ejemplo the-cocktail-db.p.rapidapi.com.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" id="idBtnBorrarKey">
+                        <i class="bi bi-trash"></i> Borrar clave
+                    </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check"></i> Guardar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/ejercicio2.js" defer></script>
+
+</body>
+
+</html>
